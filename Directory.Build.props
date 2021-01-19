@@ -1,0 +1,33 @@
+<Project>
+  <PropertyGroup>
+    <Configuration>Release</Configuration>
+    <TargetArchitecture>wasm</TargetArchitecture>
+    <TargetOS>Browser</TargetOS>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
+    <OutputPath>bin</OutputPath>
+
+    <WasmAppDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\AppBundle\</WasmAppDir>
+    <WasmMainJSPath>runtime-test.js</WasmMainJSPath>
+
+    <BuildBaseDir>$(MSBuildThisFileDirectory)build\</BuildBaseDir>
+    <MicrosoftNetCoreAppRuntimePackRidDir>$(BuildBaseDir)microsoft.netcore.app.runtime.browser-wasm\runtimes\browser-wasm\</MicrosoftNetCoreAppRuntimePackRidDir>
+
+    <MonoAOTCompilerDir>$(BuildBaseDir)\MonoAOTCompiler\</MonoAOTCompilerDir>
+    <MonoAOTCompilerTasksAssemblyPath>$(MonoAOTCompilerDir)MonoAOTCompiler.dll</MonoAOTCompilerTasksAssemblyPath>
+    <MonoAotCrossCompilerPath>$(MicrosoftNetCoreAppRuntimePackRidDir)native\cross\$(RuntimeIdentifier)\mono-aot-cross</MonoAotCrossCompilerPath>
+
+    <WasmAppBuilderDir>$(BuildBaseDir)\WasmAppBuilder\</WasmAppBuilderDir>
+    <WasmAppBuilderTasksAssemblyPath>$(WasmAppBuilderDir)\WasmAppBuilder.dll</WasmAppBuilderTasksAssemblyPath>
+    <WasmBuildTasksDir>$(BuildBaseDir)\WasmBuildTasks\</WasmBuildTasksDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <None Remove="build\**\*" />
+  </ItemGroup>
+
+  <Import Project="$(BuildBaseDir)wasm\WasmApp.props" />
+</Project>

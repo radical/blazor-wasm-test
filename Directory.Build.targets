@@ -1,0 +1,38 @@
+<Project>
+  <Import Project="$(BuildBaseDir)\wasm\WasmApp.targets" />
+
+  <PropertyGroup>
+    <WasmBuildAppDependsOn>PrepareForWasmBuild;$(WasmBuildAppDependsOn)</WasmBuildAppDependsOn>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
+    <!-- Runtime feature defaults to trim unnecessary code -->
+    <EventSourceSupport>false</EventSourceSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <DebuggerSupport>false</DebuggerSupport>
+  </PropertyGroup>
+
+  <!-- Redirect 'dotnet publish' to in-tree runtime pack -->
+  <Target Name="TrickRuntimePackLocation" AfterTargets="ProcessFrameworkReferences">
+    <ItemGroup>
+      <RuntimePack>
+        <PackageDirectory>$(BuildBaseDir)microsoft.netcore.app.runtime.browser-wasm\</PackageDirectory>
+      </RuntimePack>
+    </ItemGroup>
+    <Message Text="Packaged ID: %(RuntimePack.PackageDirectory)" Importance="high" />
+  </Target>
+
+  <Target Name="PrepareForWasmBuild">
+    <PropertyGroup>
+      <WasmBuildDir>$(MSBuildThisFileDirectory)$(PublishDir)\</WasmBuildDir>
+      <WasmMainAssemblyPath>$(OutDir)$(AssemblyName).dll</WasmMainAssemblyPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <WasmAssembliesToBundle Include="$(TargetDir)publish\*.dll" />
+    </ItemGroup>
+  </Target>
+</Project>
