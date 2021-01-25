@@ -6,6 +6,7 @@
     <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
     <OutputType>Exe</OutputType>
     <OutputPath>bin</OutputPath>
+    <BlazorEnableCompression>false</BlazorEnableCompression>
 
     <WasmAppDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\AppBundle\</WasmAppDir>
     <WasmMainJSPath>runtime-test.js</WasmMainJSPath>

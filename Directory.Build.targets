@@ -2,7 +2,7 @@
   <Import Project="$(BuildBaseDir)\wasm\WasmApp.targets" />
 
   <PropertyGroup>
-    <WasmBuildAppDependsOn>PrepareForWasmBuild;$(WasmBuildAppDependsOn)</WasmBuildAppDependsOn>
+    <WasmBuildAppDependsOn />
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>link</TrimMode>
   </PropertyGroup>
@@ -24,15 +24,5 @@
       </RuntimePack>
     </ItemGroup>
     <Message Text="Packaged ID: %(RuntimePack.PackageDirectory)" Importance="high" />
-  </Target>
-
-  <Target Name="PrepareForWasmBuild">
-    <PropertyGroup>
-      <WasmBuildDir>$(MSBuildThisFileDirectory)$(PublishDir)\</WasmBuildDir>
-      <WasmMainAssemblyPath>$(OutDir)$(AssemblyName).dll</WasmMainAssemblyPath>
-    </PropertyGroup>
-    <ItemGroup>
-      <WasmAssembliesToBundle Include="$(TargetDir)publish\*.dll" />
-    </ItemGroup>
   </Target>
 </Project>
