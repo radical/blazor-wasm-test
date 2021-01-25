@@ -11,18 +11,4 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
-  <Target Name="PrepareForWasmBuildNative">
-
-    <PropertyGroup>
-      <WasmBuildDir>$(TargetDir)\publish\wwwroot\_framework\</WasmBuildDir>
-      <WasmMainAssemblyPath>$(OutDir)$(AssemblyName).dll</WasmMainAssemblyPath>
-    </PropertyGroup>
-    <ItemGroup>
-      <_WasmAssemblies Include="$(TargetDir)\publish\wwwroot\_framework\*.dll" />
-    </ItemGroup>
-
-  </Target>
-
-  <Target Name="TriggerAOTCompilation" AfterTargets="Publish" DependsOnTargets="PrepareForWasmBuildNative;_WasmBuildNative" />
-
 </Project>

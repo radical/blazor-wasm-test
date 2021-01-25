@@ -25,4 +25,17 @@
     </ItemGroup>
     <Message Text="Packaged ID: %(RuntimePack.PackageDirectory)" Importance="high" />
   </Target>
+
+  <Target Name="PrepareForWasmBuildNative">
+    <PropertyGroup>
+      <WasmBuildDir>$(TargetDir)\publish\wwwroot\_framework\</WasmBuildDir>
+      <WasmMainAssemblyPath>$(OutDir)$(AssemblyName).dll</WasmMainAssemblyPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <_WasmAssemblies Include="$(TargetDir)\publish\wwwroot\_framework\*.dll" />
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="TriggerAOTCompilation" AfterTargets="Publish" DependsOnTargets="PrepareForWasmBuildNative;_WasmBuildNative" />
 </Project>
