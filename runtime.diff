@@ -1,0 +1,66 @@
+diff --git a/src/mono/wasm/build/WasmApp.InTree.props b/src/mono/wasm/build/WasmApp.InTree.props
+index f9540f1fac7..aaa8407d4b2 100644
+--- a/src/mono/wasm/build/WasmApp.InTree.props
++++ b/src/mono/wasm/build/WasmApp.InTree.props
+@@ -7,11 +7,14 @@
+     <EnableTargetingPackDownload>false</EnableTargetingPackDownload>
+     <TargetFramework>$(NetCoreAppToolCurrent)</TargetFramework>
+     <MicrosoftNetCoreAppRuntimePackRidDir>$(ArtifactsBinDir)microsoft.netcore.app.runtime.browser-wasm\$(Configuration)\runtimes\browser-wasm\</MicrosoftNetCoreAppRuntimePackRidDir>
++    <MonoAotCrossCompilerPath>$(MicrosoftNetCoreAppRuntimePackRidDir)native\cross\$(PackageRID)\mono-aot-cross</MonoAotCrossCompilerPath>
+     <EMSDK_PATH Condition="'$(EMSDK_PATH)' == '' and '$(MonoProjectRoot)' != ''">$(MonoProjectRoot)wasm\emsdk</EMSDK_PATH>
+ 
+     <RunAOTCompilation Condition="'$(RunAOTCompilation)' == ''">false</RunAOTCompilation>
+     <PublishTrimmed>true</PublishTrimmed>
+     <TrimMode>link</TrimMode>
+     <RunAnalyzers>false</RunAnalyzers>
++
++    <WasmBuildAppAfterTarget Condition="'$(WasmBuildAppAfterTarget)' == ''">Publish</WasmBuildAppAfterTarget>
+   </PropertyGroup>
+ </Project>
+diff --git a/src/mono/wasm/build/WasmApp.targets b/src/mono/wasm/build/WasmApp.targets
+index 18afa169ce1..9a5e0a77f5a 100644
+--- a/src/mono/wasm/build/WasmApp.targets
++++ b/src/mono/wasm/build/WasmApp.targets
+@@ -50,7 +50,7 @@
+     <WasmNativeStrip>true</WasmNativeStrip>
+   </PropertyGroup>
+ 
+-  <Target Name="WasmBuildApp" AfterTargets="Publish" />
++  <Target Name="WasmBuildApp" AfterTargets="$(WasmBuildAppAfterTarget)" />
+ 
+   <Target Name="_WasmAotCompileApp" Condition="'$(RunAOTCompilation)' == 'true'">
+     <ItemGroup>
+@@ -73,7 +73,7 @@
+     </PropertyGroup>
+ 
+     <MonoAOTCompiler
+-      CompilerBinaryPath="$(MicrosoftNetCoreAppRuntimePackRidDir)native\cross\$(PackageRID)\mono-aot-cross"
++      CompilerBinaryPath="$(MonoAotCrossCompilerPath)"
+       Mode="$(AOTMode)"
+       OutputType="AsmOnly"
+       Assemblies="@(_AotInputAssemblies)"
+@@ -186,15 +186,15 @@
+      OutputPath="$(WasmBuildDir)pinvoke-table.h" />
+ 
+    <ItemGroup>
+-     <_WasmObjects Include="libmono-ee-interp.a"/>
+-     <_WasmObjects Include="libmonosgen-2.0.a"/>
+-     <_WasmObjects Include="libmono-ilgen.a"/>
+-     <_WasmObjects Include="libmono-icall-table.a"/>
+-     <_WasmObjects Include="libSystem.Native.a"/>
+-     <_WasmObjects Include="libSystem.IO.Compression.Native.a"/>
+-     <_WasmObjects Include="libmono-profiler-aot.a"/>
+-     <_WasmObjects Include="libicuuc.a"/>
+-     <_WasmObjects Include="libicui18n.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libmono-ee-interp.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libmonosgen-2.0.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libmono-ilgen.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libmono-icall-table.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libSystem.Native.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libSystem.IO.Compression.Native.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libmono-profiler-aot.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libicuuc.a"/>
++     <_WasmObjects Include="$(MicrosoftNetCoreAppRuntimePackRidDir)native/libicui18n.a"/>
+      <_WasmObjects Include="driver.o"/>
+      <_WasmObjects Include="pinvoke.o"/>
+      <_WasmObjects Include="corebindings.o"/>
