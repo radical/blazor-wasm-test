@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RunAOTCompilation>true</RunAOTCompilation>
+    <BlazorCacheBootResources>false</BlazorCacheBootResources>
+    <AOTMode>AotInterp</AOTMode>
   </PropertyGroup>
 
   <ItemGroup>

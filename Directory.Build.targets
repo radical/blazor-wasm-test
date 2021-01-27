@@ -1,41 +1,26 @@
 <Project>
-  <Import Project="$(BuildBaseDir)\wasm\WasmApp.targets" />
-
-  <PropertyGroup>
-    <WasmBuildAppDependsOn />
-    <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>link</TrimMode>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
-    <!-- Runtime feature defaults to trim unnecessary code -->
-    <EventSourceSupport>false</EventSourceSupport>
-    <UseSystemResourceKeys>true</UseSystemResourceKeys>
-    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
-    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
-    <DebuggerSupport>false</DebuggerSupport>
-  </PropertyGroup>
-
-  <!-- Redirect 'dotnet publish' to in-tree runtime pack -->
-  <Target Name="TrickRuntimePackLocation" AfterTargets="ProcessFrameworkReferences">
-    <ItemGroup>
-      <RuntimePack>
-        <PackageDirectory>$(BuildBaseDir)microsoft.netcore.app.runtime.browser-wasm\</PackageDirectory>
-      </RuntimePack>
-    </ItemGroup>
-    <Message Text="Packaged ID: %(RuntimePack.PackageDirectory)" Importance="high" />
+  <Target Name="CheckWasmLocalBuildInputs" BeforeTargets="Build">
+    <Error
+        Condition="'$(RuntimeSrcDir)' == '' and '$(WasmBuildSupportDir)' == ''"
+        Text="Either %24(RuntimeSrcDir) or %24(WasmBuildSupportDir) need to be set" />
   </Target>
 
   <Target Name="PrepareForWasmBuildNative">
     <PropertyGroup>
-      <WasmBuildDir>$(TargetDir)\publish\wwwroot\_framework\</WasmBuildDir>
-      <WasmMainAssemblyPath>$(OutDir)$(AssemblyName).dll</WasmMainAssemblyPath>
+      <WasmAppDir>$(TargetDir)\publish\wwwroot\_framework\</WasmAppDir>
     </PropertyGroup>
     <ItemGroup>
-      <_WasmAssemblies Include="$(TargetDir)\publish\wwwroot\_framework\*.dll" />
-    </ItemGroup>
+      <ExcludeItems Include="$(WasmAppDir)\*JSInterop*.dll"/>
+      <ExcludeItems Include="$(WasmAppDir)\Microsoft.Extensions*.dll"/>
+      <ExcludeItems Include="$(WasmAppDir)\*Json*"/>
 
+      <WasmAssembliesToBundle Include="$(TargetDir)\publish\wwwroot\_framework\*.dll" Exclude="@(ExcludeItems)" />
+    </ItemGroup>
   </Target>
 
-  <Target Name="TriggerAOTCompilation" AfterTargets="Publish" DependsOnTargets="PrepareForWasmBuildNative;_WasmBuildNative" />
+  <Target Name="AfterWasmBuild" AfterTargets="WasmBuildApp">
+    <Copy SourceFiles="$(WasmAppDir)\dotnet.js" DestinationFiles="$(WasmAppDir)\$(_BlazorDotnetJsFileName)" />
+  </Target>
+
+  <Import Project="$(_WasmTargetsDir)WasmApp.LocalBuild.targets" Condition="Exists('$(_WasmTargetsDir)\WasmApp.LocalBuild.targets')" />
 </Project>

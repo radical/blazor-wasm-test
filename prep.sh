@@ -13,6 +13,7 @@ fi
 MODE=${2:link}
 RUNTIME_SRC_DIR=$1
 ARTIFACTS_BIN_DIR=$1/artifacts/bin
+RUNTIME_CONFIG=${RUNTIME_CONFIG:-Release}
 
 if [ "$MODE" = "link" ]; then
     ln -v -s $RUNTIME_SRC_DIR/src/mono/wasm/build wasm
