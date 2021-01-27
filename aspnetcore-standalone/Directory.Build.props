@@ -1,0 +1,18 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.props))\Directory.Build.props" Condition="'$(WasmSkipImportDirectoryBuildFilesAbove)' != 'true'" />
+
+  <PropertyGroup>
+    <_WasmTargetsDir Condition="'$(RuntimeSrcDir)' != ''">$(RuntimeSrcDir)\src\mono\wasm\build\</_WasmTargetsDir>
+    <!-- mono-cil-strip'ing assemblies breaks right now,
+         on trying to invoke the entry point -->
+    <WasmStripAOTAssemblies>false</WasmStripAOTAssemblies>
+    <BlazorCacheBootResources>false</BlazorCacheBootResources>
+  </PropertyGroup>
+
+  <Import Project="$(_WasmTargetsDir)WasmApp.LocalBuild.props" Condition="Exists('$(_WasmTargetsDir)\WasmApp.LocalBuild.props')" />
+
+  <PropertyGroup>
+    <WasmBuildAppDependsOn>PrepareForWasmBuildNative;$(WasmBuildAppDependsOn)</WasmBuildAppDependsOn>
+    <WasmGenerateAppBundle>false</WasmGenerateAppBundle>
+  </PropertyGroup>
+</Project>

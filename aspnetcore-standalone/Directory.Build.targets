@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.targets))\Directory.Build.targets" Condition="'$(WasmSkipImportDirectoryBuildFilesAbove)' != 'true'" />
+  <Target Name="PrepareForWasmBuildNative">
+    <PropertyGroup>
+      <WasmAppDir>$(TargetDir)\publish\wwwroot\_framework\</WasmAppDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <ExcludeItems Include="$(WasmAppDir)\*JSInterop*.dll"/>
+      <ExcludeItems Include="$(WasmAppDir)\Microsoft.Extensions*.dll"/>
+      <ExcludeItems Include="$(WasmAppDir)\*Json*"/>
+
+      <WasmAssembliesToBundle Include="$(TargetDir)\publish\wwwroot\_framework\*.dll" Exclude="@(ExcludeItems)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AfterWasmBuild" AfterTargets="WasmBuildApp">
+    <Copy SourceFiles="$(WasmAppDir)\dotnet.js" DestinationFiles="$(WasmAppDir)\$(_BlazorDotnetJsFileName)" />
+  </Target>
+
+  <Import Project="$(_WasmTargetsDir)WasmApp.LocalBuild.targets" Condition="Exists('$(_WasmTargetsDir)\WasmApp.LocalBuild.targets')" />
+</Project>
