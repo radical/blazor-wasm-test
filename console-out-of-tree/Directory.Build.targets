@@ -1,0 +1,15 @@
+<Project>
+  <Target Name="CheckWasmLocalBuildInputs" BeforeTargets="Build">
+    <Error
+        Condition="'$(RuntimeSrcDir)' == '' and '$(WasmBuildSupportDir)' == ''"
+        Text="Either %24(RuntimeSrcDir) or %24(WasmBuildSupportDir) need to be set" />
+  </Target>
+
+  <Target Name="PrepareForWasmBuild">
+    <ItemGroup>
+      <WasmAssembliesToBundle Include="$(TargetDir)publish\*.dll" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="$(_WasmTargetsDir)WasmApp.LocalBuild.targets" Condition="Exists('$(_WasmTargetsDir)\WasmApp.LocalBuild.targets')" />
+</Project>
