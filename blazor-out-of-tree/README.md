@@ -7,10 +7,7 @@ Out of tree blazor sample
 You can use an existing runtime build, and simply use the required bits from there, with no other
 setup required.
 
-1. Ensure that you have a local `dotnet/runtime` build, from https://github.com/radical/runtime/tree/blazor-in-tree-wasm-local
-   (or just get changes starting at https://github.com/radical/runtime/commit/52db07bffb4dadf4788623606c137911d940ef0d)
-
-2. Build
+1. Build
 
 `$ <aspnetcore-repo>/.dotnet/dotnet publish /p:RuntimeSrcDir=</path/to/runtime/root> /p:RuntimeConfig=<config-used-in-runtime-build> /p:RunAOTCompilation=true`
 
