@@ -1,0 +1,36 @@
+<Project>
+  <Target Name="CreateWasmBuildSupportDir">
+    <Error Text="%24(RuntimeSrcDir) needs to be set" Condition="'$(RuntimeSrcDir)' == ''" />
+    <Error Text="%24(RuntimeSrcDir)=$(RuntimeSrcDir) not found" Condition="!Exists($(RuntimeSrcDir))" />
+    <Error Text="%24(RuntimeConfig) needs to be set" Condition="'$(RuntimeConfig)' == ''" />
+    <Error Text="%24(TargetDir) needs to be set" Condition="'$(TargetDir)' == ''" />
+
+    <PropertyGroup>
+      <ArtifactsBinDir>$(RuntimeSrcDir)\artifacts\bin\</ArtifactsBinDir>
+      <TargetDir>$(TargetDir)\build\</TargetDir>
+    </PropertyGroup>
+    <ItemGroup>
+
+      <TaskNames Include="MonoAOTCompiler" />
+      <TaskNames Include="WasmAppBuilder" />
+      <TaskNames Include="WasmBuildTasks" />
+
+      <TaskDir Include="$(ArtifactsBinDir)\%(TaskNames.Identity)\Debug\net5.0\" Name="%(TaskNames.Identity)" />
+    </ItemGroup>
+
+    <Error Condition="!Exists(%(TaskDir.Identity))" Text="Could not find %(TaskDir.Identity)" />
+
+    <!-- WebAssembly.Sdk -->
+    <MakeDir Directories="$(TargetDir)" />
+
+    <ItemGroup>
+      <Files Include="$(RuntimeSrcDir)\src\mono\wasm\build\*" Destination="wasm\" />
+      <Files Include="%(TaskDir.Identity)\*" Destination="%(TaskDir.Name)\" />
+      <Files Include="$(ArtifactsBinDir)\WasmAppBuilder\Debug\net5.0\publish\System.Reflection*" Destination="WasmAppBuilder\" />
+
+      <Files Include="$(ArtifactsBinDir)\microsoft.netcore.app.runtime.browser-wasm\$(RuntimeConfig)\**\*" Destination="microsoft.netcore.app.runtime.browser-wasm\" />
+    </ItemGroup>
+
+    <Copy SourceFiles="%(Files.Identity)" DestinationFiles="$(TargetDir)%(Files.Destination)%(RecursiveDir)%(FileName)%(Extension)" />
+  </Target>
+</Project>
